@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\data;
 
 class RegisterController extends Controller
 {
@@ -42,18 +43,45 @@ class RegisterController extends Controller
     }
 
     /**
-     * Get a validator for an incoming registration request.
+     * Get a validator for an incoming registration data.
      *
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        return Validator::make($data,
+
+        [
+            'nome' => 'required',
+            'matricula' => 'required|size:7|unique:users,matricula',
+            'email' => 'required|email',
+            'orgao' => 'required',
+            'unidade' => 'required',
+            'funcao' => 'required',
+            'status' => 'required',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required'
+        ],
+
+        [
+            'nome.required' => '* Obrigatório',
+            'matricula.required' => '* Obrigatório',
+            'matricula.size' => 'O campo Matrícula deve conter 7 dítgitos numéricos',
+            'matricula.unique' => 'Este número de Matrícula já existe',
+            'email.required' => '* Obrigatório',
+            'email.email' => 'O campo Email não foi preenchido corretamente',
+            'orgao.required' => '* Obrigatório',
+            'unidade.required' => '* Obrigatório',
+            'funcao.required' => '* Obrigatório',
+            'status.required' => '* Obrigatório',
+            'password.required' => '* Obrigatório',
+            'password.min' => 'O campo Senha deve conter no mínimo 6 caracteres',
+            'password_confirmation.confirmed' => 'O campo Confirmar Senha deve ser igual ao campo Senha',
+            'password_confirmation.required' => '* Obrigatório'
+        ]
+
+    );
     }
 
     /**
@@ -64,10 +92,20 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+
+        $user = User::create([
+            'nome' => $data['nome'],
+            'matricula' => $data['matricula'],
             'email' => $data['email'],
+            'orgao' => $data['orgao'],
+            'unidade' => $data['unidade'],
+            'funcao' => $data['funcao'],
+            'status' => $data['status'],
             'password' => Hash::make($data['password']),
         ]);
+
+        //dd($user);
+
+        return $user;
     }
 }
